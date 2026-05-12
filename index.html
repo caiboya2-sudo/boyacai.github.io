@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>蔡博雅 Boya Cai | 新媒体视觉与信息设计</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,800;1,400&family=Noto+Sans+SC:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg-sand: #F2EFE9; --carbon: #1A1A1A; --klein-blue: #002FA7; --line-color: rgba(26, 26, 26, 0.2); --white: #FAFAFA; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: var(--bg-sand); color: var(--carbon); font-family: 'Noto Sans SC', sans-serif; overflow-x: hidden; line-height: 1.6; }
+        h1, h2, h3, .serif { font-family: 'Playfair Display', serif; }
+
+        nav { padding: 1.5rem 5%; display: flex; justify-content: space-between; border-bottom: 1px solid var(--line-color); font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase; }
+        nav span.blue { color: var(--klein-blue); font-weight: bold; }
+
+        .hero { height: 75vh; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid var(--line-color); }
+        .mask-container {
+            width: 100%; text-align: center;
+            background-image: url('https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=2000&q=80');
+            background-size: cover; background-position: center; background-attachment: fixed;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; color: transparent;
+        }
+        .hero-title { font-size: clamp(4rem, 10vw, 10rem); font-weight: 800; line-height: 0.9; text-transform: uppercase; letter-spacing: -2px; }
+        .hero-subtitle { margin-top: 2rem; font-size: 1rem; letter-spacing: 5px; -webkit-text-fill-color: var(--carbon); }
+
+        .section-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; color: #666; }
+        
+        .portfolio-section { padding: 5rem 5%; }
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; border-top: 1px solid var(--line-color); padding-top: 3rem; }
+        
+        .work-card { border: 1px solid var(--line-color); position: relative; overflow: hidden; cursor: pointer; transition: 0.4s; }
+        .work-card:hover { border-color: var(--klein-blue); transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,47,167,0.1);}
+        .work-img { width: 100%; height: 350px; object-fit: cover; filter: grayscale(100%); transition: 0.5s; }
+        .work-card:hover .work-img { filter: grayscale(0%); }
+        .work-info { padding: 1.5rem; border-top: 1px solid var(--line-color); background: var(--bg-sand); transition: 0.4s; }
+        .work-card:hover .work-info { background: var(--klein-blue); color: #fff; }
+        .work-info h3 { font-size: 1.2rem; margin-bottom: 0.5rem; }
+        .work-info p { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8;}
+        
+        .project-detail-overlay { position: fixed; top: 100%; left: 0; width: 100vw; height: 100vh; background-color: var(--white); z-index: 999; overflow-y: auto; transition: top 0.6s cubic-bezier(0.8, 0, 0.2, 1); }
+        .project-detail-overlay.active { top: 0; }
+        .close-btn { position: fixed; top: 2rem; right: 3rem; font-size: 1rem; font-family: 'Playfair Display', serif; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; z-index: 1000; background: var(--white); padding: 10px 20px; border: 1px solid var(--carbon); opacity: 0; pointer-events: none; transform: translateY(-20px); transition: all 0.4s ease; }
+        .close-btn:hover { background: var(--carbon); color: var(--white); }
+        .project-detail-overlay.active .close-btn { opacity: 1; pointer-events: auto; transform: translateY(0); transition-delay: 0.4s; }
+        
+        .detail-header { padding: 10vh 10% 5vh 10%; border-bottom: 1px solid var(--line-color); }
+        .detail-title { font-size: 4rem; line-height: 1; margin-bottom: 1rem; }
+        .detail-tags span { display: inline-block; border: 1px solid var(--carbon); padding: 5px 15px; border-radius: 50px; font-size: 0.8rem; margin-right: 10px; }
+        .detail-content { padding: 5rem 10%; }
+        .story-block { margin-bottom: 4rem; }
+        .story-text h4 { font-size: 1.5rem; margin-bottom: 1rem; color: var(--klein-blue);}
+        .story-text p { font-size: 1.1rem; color: #555; }
+        .story-text a { color: var(--klein-blue); font-weight: bold; text-decoration: none; border-bottom: 1px solid var(--klein-blue); }
+        .story-img { width: 100%; height: auto; border: 1px solid var(--line-color); border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+
+        .article-list { margin-top: 3rem; border-top: 1px solid var(--line-color); }
+        .article-item { display: flex; gap: 2rem; align-items: flex-start; padding: 2rem 0; border-bottom: 1px solid var(--line-color); }
+        .article-cover { width: 200px; height: 112px; object-fit: cover; flex-shrink: 0; border: 1px solid var(--line-color); }
+        .article-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 0.5rem; }
+        .article-link { display: inline-block; font-size: 0.9rem; font-weight: bold; color: var(--klein-blue); text-decoration: none; border-bottom: 1px dotted var(--klein-blue); transition: 0.3s;}
+        .article-link:hover { opacity: 0.7; }
+
+        .showcase-box-floating {
+            background: transparent; border: 1px solid var(--line-color); border-radius: 12px; padding: 3rem; max-width: 1200px; margin: 0 auto;    
+        }
+        .masonry-gallery { column-count: 4; column-gap: 20px; }
+        .masonry-item { display: inline-block; width: 100%; margin-bottom: 20px; break-inside: avoid; animation: float 6s ease-in-out infinite; }
+        .masonry-item:nth-child(2n) { animation-duration: 7s; animation-delay: -1s; }
+        .masonry-item:nth-child(3n) { animation-duration: 8s; animation-delay: -3s; }
+        .masonry-item:nth-child(4n) { animation-duration: 5s; animation-delay: -2s; }
+        .masonry-item:nth-child(5n) { animation-duration: 9s; animation-delay: -4s; }
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-12px); } 100% { transform: translateY(0px); } }
+        .masonry-gallery img { width: 100%; height: auto; display: block; border-radius: 6px; border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 8px 24px rgba(0,0,0,0.06); transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.4s ease; }
+        .masonry-gallery img:hover { transform: scale(1.15); box-shadow: 0 20px 40px rgba(0,0,0,0.15); z-index: 10; position: relative; }
+
+        .filmstrip-gallery {
+            display: flex; gap: 2rem; overflow-x: auto; padding: 1rem 0 3rem 0; scroll-snap-type: x mandatory; scrollbar-width: none; 
+        }
+        .filmstrip-gallery::-webkit-scrollbar { display: none; } 
+        .filmstrip-gallery img {
+            height: 400px; width: auto; object-fit: cover; border-radius: 8px; scroll-snap-align: start; 
+            border: 1px solid var(--line-color); box-shadow: 0 10px 30px rgba(0,0,0,0.08); transition: transform 0.5s ease;
+        }
+        .filmstrip-gallery img:hover { transform: scale(1.02); }
+
+        /* 03 品牌：修改后的极简矩阵（填满空白区） */
+        .static-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .static-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            background: #fff;
+            border: 1px solid var(--line-color);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            aspect-ratio: 1 / 1; /* 魔法代码 1：把画框变成完美的正方形 */
+        }
+        .static-item img {
+            width: 100%;
+            height: 100%; /* 魔法代码 2：强制高度100% */
+            object-fit: cover; /* 魔法代码 3：让图片等比例放大填满整个框，裁掉多余空白边缘 */
+            display: block;
+            transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+        .static-item:hover img { transform: scale(1.08); }
+
+        @media (max-width: 900px) { .masonry-gallery { column-count: 3; } }
+        @media (max-width: 768px) { .grid, .story-block { grid-template-columns: 1fr; gap: 2rem; } .detail-title { font-size: 2.5rem; } .close-btn { top: 1rem; right: 1rem; } .article-item { flex-direction: column; } .article-cover { width: 100%; height: auto;} .showcase-box-floating { padding: 1.5rem; border: none; } .filmstrip-gallery img { height: 300px; } }
+        @media (max-width: 600px) { .masonry-gallery { column-count: 2; } .static-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div>BOYA CAI <span class="blue">/</span> PORTFOLIO</div>
+        <div>[ 2026 作品集 ]</div>
+    </nav>
+    <header class="hero">
+        <div class="mask-container">
+            <h1 class="hero-title">Visualizing<br>Information</h1>
+            <div class="hero-subtitle">信息可视化 × 新闻敏感性 × 流程化构建</div>
+        </div>
+    </header>
+    
+    <section class="portfolio-section">
+        <div class="grid">
+            <div class="work-card" onclick="openDetail('project-1-detail')">
+                <img src="https://i.ibb.co/Q3ZYRMvy/brazil.png" class="work-img" alt="新闻专题视觉设计">
+                <div class="work-info">
+                    <h3>01. 新闻专题视觉设计</h3>
+                    <p>时政 & 社会议题</p>
+                </div>
+            </div>
+            
+            <div class="work-card" onclick="openDetail('project-2-detail')">
+                <img src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=800&q=80" class="work-img" alt="社交媒体封面设计">
+                <div class="work-info">
+                    <h3>02. 社交媒体封面设计</h3>
+                    <p>Social Media Visuals</p>
+                </div>
+            </div>
+
+            <div class="work-card" onclick="openDetail('project-3-detail')">
+                <img src="https://images.unsplash.com/photo-1600132806370-bf17e65e942f?auto=format&fit=crop&w=800&q=80" class="work-img" alt="品牌与物料设计">
+                <div class="work-info">
+                    <h3>03. 品牌与物料设计</h3>
+                    <p>Branding & Graphic</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 弹窗1：新闻专题视觉设计 -->
+    <div id="project-1-detail" class="project-detail-overlay">
+        <div class="close-btn" onclick="closeDetail('project-1-detail')">[ Close ]</div>
+        <div class="detail-header">
+            <h2 class="detail-title serif">新闻专题视觉设计<br>News Feature Visuals</h2>
+            <div class="detail-tags"><span>国际新闻</span><span>封面设计</span><span>时政&社会议题</span></div>
+        </div>
+        <div class="detail-content">
+            <div class="story-block">
+                <div class="story-text">
+                    <div class="section-label" style="margin-bottom: 10px;">[ CASE 01: 国际新闻博客视觉运营 ]</div>
+                    <h4>金砖创新基地数字经济研究中心</h4>
+                    <p>在担任新闻媒体实习生期间，我独立负责官方英文新闻博客 <a href="https://ideas-brics.org/news-blogs/" target="_blank">I.D.E.A.S. News & Blogs</a> 的视觉运营。工作内容包括为每篇关于AI、全球科技合作、数字经济等前沿议题的深度文章，设计制作符合其学术与国际调性的封面图，筛选内文配图，并负责最终的后台发布。这项经历极大地锻炼了我处理严肃国际新闻的视觉包装与跨文化传播能力。</p>
+                </div>
+            </div>
+            
+            <div class="article-list">
+                <div class="article-item"><img src="https://i.ibb.co/Q3ZYRMvy/brazil.png" class="article-cover"><div class="article-info"><h5 class="article-title">Brazil’s Governance-First AI Gambit: A New Model and its Challenge</h5><a href="https://ideas-brics.org/brazils-governance-first-ai-gambit-a-new-model-and-its-challenge/" target="_blank" class="article-link">Read Article →</a></div></div>
+                <div class="article-item"><img src="https://i.ibb.co/KgdCJR9/AI-Innovation-Journal-Connects-with-Global-Experts-at-i-KM2025-Conference.png" class="article-cover"><div class="article-info"><h5 class="article-title">AI Innovation Journal Connects with Global Experts at iKM2025 Conference</h5><a href="https://ideas-brics.org/ai-innovation-journal-connects-with-global-experts-at-ikm2025-conference/" target="_blank" class="article-link">Read Article →</a></div></div>
+                <div class="article-item"><img src="https://i.ibb.co/3msJFxVB/medical-ai-9.png" class="article-cover"><div class="article-info"><h5 class="article-title">China’s Medical AI: A New Engine for Digital Health</h5><a href="https://ideas-brics.org/chinas-medical-ai-a-new-engine-for-digital-health/" target="_blank" class="article-link">Read Article →</a></div></div>
+                <div class="article-item"><img src="https://i.ibb.co/rRzT4tcV/semiconductor9.png" class="article-cover"><div class="article-info"><h5 class="article-title">How is China’s Semiconductor Strategy Reshaping Global Tech Cooperation?</h5><a href="https://ideas-brics.org/how-is-chinas-semiconductor-strategy-reshaping-global-tech-cooperation/" target="_blank" class="article-link">Read Article →</a></div></div>
+                <div class="article-item"><img src="https://i.ibb.co/3ygXcLW9/samrt-harvest9.png" class="article-cover"><div class="article-info"><h5 class="article-title">The Smart Harvest: AI’s Role in Securing Food for the Global South</h5><a href="https://ideas-brics.org/the-smart-harvest-ais-role-in-securing-food-for-the-global-south/" target="_blank" class="article-link">Read Article →</a></div></div>
+                <div class="article-item"><img src="https://i.ibb.co/VWtLbxR4/rio-declaration9.png" class="article-cover"><div class="article-info"><h5 class="article-title">The Rio Declaration: Architecting a Data Economy for the Global South</h5><a href="https://ideas-brics.org/the-rio-declaration-architecting-a-data-economy-for-the-global-south/" target="_blank" class="article-link">Read Article →</a></div></div>
+                <div class="article-item"><img src="https://i.ibb.co/wZcvZLkH/shared-code9.png" class="article-cover"><div class="article-info"><h5 class="article-title">Shared Code, Shared Progress: The China Open Source Initiative</h5><a href="https://ideas-brics.org/shared-code-shared-progress-the-china-open-source-initiative/" target="_blank" class="article-link">Read Article →</a></div></div>
+                <div class="article-item"><img src="https://i.ibb.co/KzN6VSYN/WAIC9.png" class="article-cover"><div class="article-info"><h5 class="article-title">I.D.E.A.S. at WAIC 2025: Embodied AI Panel Report</h5><a href="https://ideas-brics.org/ideas-at-waic-2025-embodied-ai-panel-report/" target="_blank" class="article-link">Read Article →</a></div></div>
+                <div class="article-item"><img src="https://i.ibb.co/n8wSpG1p/quark9.png" class="article-cover"><div class="article-info"><h5 class="article-title">Quark’s College Application Assistance Model</h5><a href="https://ideas-brics.org/quarks-college-application-assistance-model-can-chinese-experience-of-smart-education-be-universally-beneficial-to-brics-countries/" target="_blank" class="article-link">Read Article →</a></div></div>
+                <div class="article-item"><img src="https://i.ibb.co/Q75QwKtb/RMB9.png" class="article-cover"><div class="article-info"><h5 class="article-title">China’s Digital RMB: Cross-border Integration Policy Framework</h5><a href="https://ideas-brics.org/chinas-digital-rmb-cross-border-integration-policy-framework-and-strategic-implications/" target="_blank" class="article-link">Read Article →</a></div></div>
+                <div class="article-item"><img src="https://i.ibb.co/39Dk8SmC/BRICS9.png" class="article-cover"><div class="article-info"><h5 class="article-title">Reflections on the BRICS New Energy Roadmap in a Digital Era</h5><a href="https://ideas-brics.org/reflections-on-the-brics-new-energy-roadmap-in-a-digital-era/" target="_blank" class="article-link">Read Article →</a></div></div>
+                <div class="article-item"><img src="https://i.ibb.co/pjfyW3Z4/xioami9.png" class="article-cover"><div class="article-info"><h5 class="article-title">Xiaomi’s in-house Xring-O1 Chip Takes on Snapdragon 8 Elite</h5><a href="https://ideas-brics.org/xiaomis-in-house-xring-o1-chip-takes-on-snapdragon-8-elite-in-geekbench-tests/" target="_blank" class="article-link">Read Article →</a></div></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 弹窗2：社交媒体封面设计 -->
+    <div id="project-2-detail" class="project-detail-overlay">
+        <div class="close-btn" onclick="closeDetail('project-2-detail')">[ Close ]</div>
+        <div class="detail-header">
+            <h2 class="detail-title serif">社交媒体封面设计<br>Social Media Visuals</h2>
+            <div class="detail-tags"><span>多平台适配</span><span>强网感排版</span><span>信息长图</span></div>
+        </div>
+        <div class="detail-content">
+            <div class="story-block">
+                <div class="story-text">
+                    <div class="section-label" style="margin-bottom: 10px;">[ SOCIAL MEDIA EXAMPLES ]</div>
+                    <h4>全矩阵社交媒体视觉设计</h4>
+                    <p>针对不同社交媒体平台的传播特性，独立设计并输出多规格的视觉资产。涵盖适用于 Bilibili、YouTube 的 16:9 横屏长视频封面，以及适用于小红书、短视频平台的高转化率竖屏视觉。</p>
+                </div>
+            </div>
+
+            <div class="section-label" style="margin-bottom: 1rem; text-align: left;">[ CASE: 社交媒体多规格封面适配 ]</div>
+            <div class="showcase-box-floating">
+                <div class="masonry-gallery">
+                    <div class="masonry-item"><img src="https://i.ibb.co/yBSPBXh7/APEC.png" alt="APEC"></div>
+                    <div class="masonry-item"><img src="https://i.ibb.co/mFdFyxDJ/b-1920-1080.png" alt="Bilibili 横版"></div>
+                    <div class="masonry-item"><img src="https://i.ibb.co/wNNVY67b/youtube-2.png" alt="YouTube 横版"></div>
+                    <div class="masonry-item"><img src="https://i.ibb.co/5gj8ZcPR/WAICO.png" alt="WAICO"></div>
+                    <div class="masonry-item"><img src="https://i.ibb.co/vv3tfZxP/WAICO.png" alt="WAICO 2"></div>
+                    <div class="masonry-item"><img src="https://i.ibb.co/0jNr2KJ4/image.png" alt="社媒图"></div>
+                    <div class="masonry-item"><img src="https://i.ibb.co/ymd2MMK4/image.png" alt="社媒图"></div>
+                    <div class="masonry-item"><img src="https://i.ibb.co/60NSyLFc/image.png" alt="社媒图"></div>
+                    <div class="masonry-item"><img src="https://i.ibb.co/JRsQRJSL/image.png" alt="社媒图"></div>
+                    <div class="masonry-item"><img src="https://i.ibb.co/HTQNFthW/2.png" alt="社媒图 2"></div>
+                    <div class="masonry-item"><img src="https://i.ibb.co/jPtLvm7r/image.png" alt="社媒图"></div>
+                    <div class="masonry-item"><img src="https://i.ibb.co/hFR545Hb/b.png" alt="社媒图 B"></div>
+                    <div class="masonry-item"><img src="https://i.ibb.co/LXCbRgwt/1.png" alt="社媒图 1"></div>
+                    <div class="masonry-item"><img src="https://i.ibb.co/9m2pSHbd/1.png" alt="社媒图 1"></div>
+                    <div class="masonry-item"><img src="https://i.ibb.co/Q77mf97r/b.jpg" alt="社媒图 B2"></div>
+                    <div class="masonry-item"><img src="https://i.ibb.co/v6hw2Grz/AI.png" alt="社媒图 AI"></div>
+                    <div class="masonry-item"><img src="https://i.ibb.co/LXZnBCSB/image.png" alt="社媒图"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 弹窗3：品牌与物料设计 -->
+    <div id="project-3-detail" class="project-detail-overlay">
+        <div class="close-btn" onclick="closeDetail('project-3-detail')">[ Close ]</div>
+        <div class="detail-header">
+            <h2 class="detail-title serif">品牌与物料设计<br>Branding & Graphic</h2>
+            <div class="detail-tags"><span>产品视觉</span><span>墙纸设计</span><span>LOGO及手绘</span></div>
+        </div>
+        
+        <div class="detail-content">
+            
+            <div class="story-block">
+                <div class="story-text">
+                    <div class="section-label" style="margin-bottom: 10px;">[ CATEGORY 01: 产品视觉设计 ]</div>
+                    <h4>品牌包装视觉重塑</h4>
+                    <p>通过提炼核心品牌基因，结合国风元素与现代排版，对传统品牌进行年轻化、现代化的视觉升级，探索传统文化在当代消费语境下的全新表达。</p>
+                </div>
+                <img src="https://i.ibb.co/LDJs9M5q/image.png" class="story-img" alt="产品视觉设计">
+            </div>
+
+            <div class="section-label" style="margin-bottom: 1rem; margin-top: 6rem; text-align: left;">[ CATEGORY 02: 墙纸创意设计 (滑动浏览) ]</div>
+            <div class="filmstrip-gallery">
+                <img src="https://i.ibb.co/84xwdfLS/2.jpg" alt="墙纸">
+                <img src="https://i.ibb.co/WvfbbjTn/1.jpg" alt="墙纸">
+                <img src="https://i.ibb.co/B0Ckjmp/3.jpg" alt="墙纸">
+                <img src="https://i.ibb.co/ptrT2Qb/7ddb416181be9888418c05fe691f9372.png" alt="墙纸">
+                <img src="https://i.ibb.co/pvV2jvGt/09a1ee5ed15c6ed7b8e14f1dbbe9d9a6.png" alt="墙纸">
+                <img src="https://i.ibb.co/ym5J3bbm/5f67a6e35b6e5b7f3815f132e0b6fc55.png" alt="墙纸">
+                <img src="https://i.ibb.co/LznZphxD/8271abb63360332679568814904a0bce.png" alt="墙纸">
+            </div>
+
+            <div class="section-label" style="margin-bottom: 1rem; margin-top: 6rem; text-align: left;">[ CATEGORY 03: LOGO及手绘设计 ]</div>
+            <div class="static-grid">
+                <div class="static-item"><img src="https://i.ibb.co/5X2kJWkS/image.png" alt="LOGO"></div>
+                <div class="static-item"><img src="https://i.ibb.co/zhMHgBGF/image.png" alt="LOGO"></div>
+                <div class="static-item"><img src="https://i.ibb.co/393KBLxw/c068b0f4e7045b45302f3024ba85c660.jpg" alt="手绘"></div>
+                <div class="static-item"><img src="https://i.ibb.co/hRQqZ8pJ/953e8289d213dad01c088dda34fa688d.jpg" alt="手绘"></div>
+                <div class="static-item"><img src="https://i.ibb.co/4Z47bRNH/21b015498780e6efe3e3d22fe122c65e.jpg" alt="手绘"></div>
+                <div class="static-item"><img src="https://i.ibb.co/gFgzMGCb/b39535003b531cc7ead5d37c7ce786ce.jpg" alt="手绘"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function openDetail(id) { document.getElementById(id).classList.add('active'); document.body.style.overflow = 'hidden'; }
+        function closeDetail(id) { document.getElementById(id).classList.remove('active'); document.body.style.overflow = 'auto'; }
+    </script>
+</body>
+</html>
